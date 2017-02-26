@@ -1,13 +1,4 @@
 ===================================================================================
-    Predict IMDB movie rating
-    by Chuan Sun (sundeepblue at gmail dot com)
-    https://twitter.com/sundeepblue
-    Scrapy project @ NYC Data Science Academy
-    8/14/2016
-===================================================================================
-
-
-===================================================================================
 # STEP 1: 
 
 Fetch a list of 5000 movie titles and budgets from www.the-numbers.com
@@ -49,20 +40,20 @@ $ scrapy crawl imdb -o imdb_output.json
 ===================================================================================
 # STEP 4: 
 
-Perform face recognition to count face numbers from all posters
+Since the IMDB budgets are just domestic values, the data from the-numbers.com is more complete. This step tries to join the budgets for worldwide revenue from the-numbers.com with the IMDB data that is parsed.
 
-This step will save result into JSON file 'image_and_facenumber_pair_list.json'
+Fuzzy matchins is used, with accuraccy of only >90 being considered, other movies are either specific cases or have no budgets, and will be cleaned manually.
 
-$ python detect_faces_from_posters.py
+This step will save result into JSON file 'imdb_output_budgets.json'
+
+$ python updatebudgets.py
 
 ===================================================================================
 # STEP 5: 
 
-Load two JSON files 'imdb_output.json' and 'image_and_facenumber_pair_list.json'
+Parse all variables into valid format CSV.
 
-Parse all variables into valid format.
-
-Generate a final CSV table containing 28 variables that can be loaded in R or Pandas
+Generate a final CSV table containing 31 variables that can be loaded in R or Pandas, or pure Python for OGs.
 
 The output will be a CSV file 'movie_metadata.csv' (1.5MB)
 
@@ -93,7 +84,10 @@ The output will be a CSV file 'movie_metadata.csv' (1.5MB)
 "budget"                    
 "title_year"                   
 "imdb_score"                
-"aspect_ratio"              
+"aspect_ratio"
+"release_date"
+"production_budget"
+"worldwide_gross"
 
 $ python parse_scraped_data.py
 
@@ -106,3 +100,13 @@ Load the 'movie_metadata.csv' file in RStudio, and perform EDA and LASSO regress
 $ > run the RStudio
 
 $ > load the file 'movie_rating_prediction.R'
+
+===================================================================================
+    Original author:
+    Predict IMDB movie rating
+    by Chuan Sun (sundeepblue at gmail dot com)
+    https://twitter.com/sundeepblue
+    Scrapy project @ NYC Data Science Academy
+    8/14/2016
+===================================================================================
+
