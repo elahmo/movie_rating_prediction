@@ -5,7 +5,7 @@ import json
 import locale
 import collections
 
-base_dir = "/Users/sundeepblue/movie"
+base_dir = "/Users/ahmet/Documents/Github/movie_rating_prediction"
 locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' ) 
 
 
@@ -58,7 +58,7 @@ def remove_non_ascii_chars_in_string(s):
 
 def load_unparsed_movie_metadata():
     try:
-        with open(os.path.join(base_dir, "imdb_output.json"), "r") as f:
+        with open(os.path.join(base_dir, "imdb_output_budget.json"), "r") as f:
             movies = json.load(f)
             return movies
     except:
@@ -127,15 +127,11 @@ def parse_one_movie_metadata(movie, posterid_facenumber_dict):
     parsed_movie['imdb_score'] = float(movie['imdb_score'][0].strip())
     parsed_movie['aspect_ratio'] = parse_aspect_ratio(movie['aspect_ratio'])
     # get number of human faces in movie poster
-    if not posterid_facenumber_dict:
-        arsed_movie['facenumber_in_poster'] = None
-    else:
-        if not movie['images']:
-            parsed_movie['facenumber_in_poster'] = None
-        else:
-            poster_id = movie['images'][0]['path'].split('/')[1].split('.')[0]
-            facenumber_in_poster = posterid_facenumber_dict[poster_id]
-            parsed_movie['facenumber_in_poster'] = facenumber_in_poster
+    parsed_movie['facenumber_in_poster'] = None
+    parsed_movie['release_date'] = movie['release_date']
+    parsed_movie['worldwide_gross'] = None if movie['worldwide_gross'] is None or len(movie['worldwide_gross']) == 0 else parse_price(movie['worldwide_gross'].strip())
+    parsed_movie['production_budget'] = None if movie['production_budget'] is None or len(movie['production_budget']) == 0 else parse_price(movie['production_budget'].strip())
+
 
     num_critic_for_reviews = movie['num_critic_for_reviews']
     parsed_movie['num_critic_for_reviews'] = None if num_critic_for_reviews is None else num_critic_for_reviews
@@ -192,7 +188,7 @@ def parse_all_movies():
     print "{} movie metadata were loaded!".format(total_count)
     posterid_facenumber_dict = generate_posterid_facenumber_dict()
 
-    with open("movie_metadata.csv", "w") as f:
+    with open("movie_metadata_budgets.csv", "w") as f:
         header_was_written = False
         for i, movie in enumerate(movies):
             print "Processing {} of {}: {}".format(i+1, total_count, movie['movie_imdb_link'])
